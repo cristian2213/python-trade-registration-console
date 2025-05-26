@@ -1,6 +1,9 @@
 import questionary
-import csv
 from uuid import uuid4
+from datetime import datetime
+from pathlib import Path
+from .csv_file_attacher import CSVFileAttacher
+from .excel_file_attacher import ExcelFileAttacher
 
 
 class ConsoleRegister:
@@ -8,8 +11,17 @@ class ConsoleRegister:
     ConsoleRegister class is used to register trades in a CSV file.
     """
 
-    def __init__(self, file_path="trades.csv"):
+    def __init__(self, file_path: Path):
         self.file_path = file_path
+        self.csv_file_attacher = CSVFileAttacher(self.file_path / 'trades.csv')
+        self.excel_file_attacher = ExcelFileAttacher(
+            self.file_path / 'trades.xlsx')
+
+    def request_data(self):
+        """
+        request_data method is used to request data from the user.
+        """
+        pass
 
     def show_menu(self):
         """
@@ -84,7 +96,6 @@ class ConsoleRegister:
                 hit_tp_sl = 'Not Hit'
 
         # CALCULATE IF THE TRADE WAS A "PROFIT" OR "LOSS"
-        profit_loss: str
         opening_closing_diff = closing_price - buying_price
 
         # CALCULATE PIPs GOT
@@ -122,7 +133,7 @@ class ConsoleRegister:
 
         # dictionary with all data to create the record
         trade_dict: dict[str, str | float] = {
-            'uuid': str(uuid4()),
+            'uuid': str(uuid4().hex[:8]),
             'asset_type': asset_type,
             'asset_symbol': asset_symbol,
             'strategy': strategy,
@@ -140,24 +151,11 @@ class ConsoleRegister:
         }
 
         # Add to CSV
-        self.attach_record(trade_dict)
+        self.create_new_row(trade_dict)
 
-    def attach_record(self, trade_dict: dict[str, str | float]):
+    def create_new_row(self, trade_dict: dict[str, str | float]):
         """
-        attach_record method is used to attach a new record to the CSV file.
+        crate_record method is used to crate a new record to the CSV file.
         """
-        with open(self.file_path, 'a', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=trade_dict.keys())
-            writer.writerow(trade_dict)
-
-    def update_record(self, uuid: str):
-        """
-        update_record method is used to update an existing record in the CSV file.
-        """
-        pass
-
-    def delete_record(self, uuid: str):
-        """
-        delete_record method is used to delete an existing record in the CSV file.
-        """
-        pass
+        self.csv_file_attacher.attach_new_row(trade_dict)
+        # self.excel_file_attacher.attach_new_row(trade_dict)

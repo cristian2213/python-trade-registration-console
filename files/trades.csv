@@ -1,0 +1,2 @@
+uuid,asset_type,asset_symbol,strategy,operation_type,buying_price,closing_price,volume_lot,tp,sl,hit_tp_sl,profit_or_loss_in_pips,profit_or_loss_in_dollars,result_type,date_and_time
+842f11e4,Metal,XAUUSD,ABCD,Buy,3333.0,3400.0,0.01,3400.0,3220.0,Hit TP,67.0,0.67,Profit,2025-05-26 14:00:59
